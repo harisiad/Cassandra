@@ -158,74 +158,6 @@ public class ParserTest {
     
     
     /**
-     * Test of get conditions method, of class Parser.
-     * 
-     * Test queries:
-     * 1. select * from a.table1 where table1.name = 'Alex';
-     * 2. select name from a.table1, a.table2 where table1.name = table2.name;
-     * 3. select name,age from a.table1, a.table2 where table1.name = table2.name and table1.age = table2.age;
-     * 
-     * Expected Results:
-     * 1. name = 'Alex'
-     * 2. name = name
-     * 3. name = name and age = age
-     */
-//    @Test
-//    public void testGetConditions() {
-//        System.out.println("Testing getConditionsList...");
-//        String[] testQueries = 
-//        {
-//            "select * from a.table1 where table1.name = 'Alex';",
-//            "select name from a.table1, a.table2 where table1.name = table2.name;",
-//            "select name,age from a.table1, a.table2 where table1.name = table2.name and table1.age = table2.age;"
-//        };
-//        
-//        for (String q : testQueries)
-//        {
-//            Parser parserInstance = new Parser(q);
-//            try
-//            {
-//                parserInstance.BaseParser();
-//                if (q.equals("select * from a.table1 where table1.name = 'Alex';"))
-//                {
-//                    String[] expResult = { "name = 'Alex'" };
-//                    int expResultLength = expResult.length;
-//                    String[] result = parserInstance.getConditionsList();
-//                    //Assert length of parsing result
-//                    assertEquals(expResultLength, result.length);
-//                    // Assert parsing result
-//                    assertArrayEquals(expResult, result);
-//                }
-//                else if (q.equals("select name from a.table1, a.table2 where table1.name = table2.name;"))
-//                {
-//                    String[] expResult = { "name = name" };
-//                    int expResultLength = expResult.length;
-//                    String[] result = parserInstance.getConditionsList();
-//                    //Assert length of parsing result
-//                    assertEquals(expResultLength, result.length);
-//                    // Assert parsing result
-//                    assertArrayEquals(expResult, result);
-//                }
-//                else if (q.equals("select name,age from a.table1, a.table2 where table1.name = table2.name and table1.age = table2.age;"))
-//                {
-//                    String[] expResult = { "name = name and age = age" };
-//                    int expResultLength = expResult.length;
-//                    String[] result = parserInstance.getConditionsList();
-//                    //Assert length of parsing result
-//                    assertEquals(expResultLength, result.length);
-//                    // Assert parsing result
-//                    assertArrayEquals(expResult, result);
-//                }
-//            }
-//            catch (RecognitionException ex) 
-//            {
-//                Logger.getLogger(ParserTest.class.getName()).log(Level.SEVERE, null, ex);
-//                System.out.println(ex.getMessage());
-//            }
-//        }
-//    }
-    
-    /**
      * Test of get keyspace method, of class Parser.
      * 
      * Test queries:
@@ -302,7 +234,7 @@ public class ParserTest {
                 if (q.equals(testQueries[0]))
                 {
                     System.out.println("Testing first conditionals query...");
-                    String[] expResult = { "table1.name = 'Alex'" };
+                    String[] expResult = { "name = 'Alex'" };
                     
                     String[] result = parserInstance.getConditionsList(parserInstance.getTableArray()[0]);
                     
@@ -311,13 +243,13 @@ public class ParserTest {
                 else if (q.equals(testQueries[1]))
                 {
                     System.out.println("Testing second conditionals query...");
-                    String[] expResult = { "table1.name = 'Alex'" };
+                    String[] expResult = { "name = 'Alex'" };
                                         
                     String[] result = parserInstance.getConditionsList(parserInstance.getTableArray()[0]);
                     
                     assertArrayEquals(expResult, result);
                     
-                    expResult = new String[] { "table2.name = 'Alex'" };
+                    expResult = new String[] { "name = 'Alex'" };
                     
                     result = parserInstance.getConditionsList(parserInstance.getTableArray()[1]);
                     
@@ -326,7 +258,7 @@ public class ParserTest {
                 else if (q.equals(testQueries[2]))
                 {
                     System.out.println("Testing third conditionals query...");
-                    String[] expResult = { "table1.name = 'Alex' AND table1.surname = 'Charisiadis'" };
+                    String[] expResult = { "name = 'Alex' AND surname = 'Charisiadis'" };
                                         
                     String[] result = parserInstance.getConditionsList(parserInstance.getTableArray()[0]);
                     
@@ -335,7 +267,7 @@ public class ParserTest {
                 else if (q.equals(testQueries[3]))
                 {
                     System.out.println("Testing fourth conditionals query...");
-                    String[] expResult = { "table1.name = 'Alex' AND table1.rampand = 1" };
+                    String[] expResult = { "name = 'Alex' AND rampand = 1" };
                                         
                     String[] result = parserInstance.getConditionsList(parserInstance.getTableArray()[0]);
                     

@@ -23,7 +23,7 @@ public class InputMgr
      */
     public static boolean UsrInput()
     {
-        boolean exitFlag = false;
+        boolean continueFlag = true;
         boolean ignoreCase = true;
         Scanner keyboardInput = new Scanner(System.in);
         String input;
@@ -35,14 +35,14 @@ public class InputMgr
         
         if(input.regionMatches(ignoreCase, 0, "exit", 0, input.length()))
         {
-            exitFlag = true;
+            continueFlag = false;
         }
         else
         {
             setUserInput(input);
         }
         
-        return exitFlag;
+        return continueFlag;
     }
     
     /**

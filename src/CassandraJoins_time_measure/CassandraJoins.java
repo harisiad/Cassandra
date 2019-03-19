@@ -449,9 +449,19 @@ public class CassandraJoins {
     }
 
     private static void sortmergejoin(Cluster ClusterConn, String KeySpace, String tableName1, String columnName1, String[] selectColumns1, String[] whereRelations1, String tableName2, String columnName2, String[] selectColumns2, String[] whereRelations2, long rowsLimit, String resultTableName, String resultColumns, boolean left) throws CassandraJoinsException {
+        String lineBr = null;
+        if (System.getProperty("os.name").contains("Windows"))
+        {
+            lineBr = "\r\n";
+        }
+        else
+        {
+            lineBr = "\n";
+        }
+        
         String where1 = createWhereClause(whereRelations1, null, null, null);
-        String query1 = createSelectClause(selectColumns1, columnName1) + "\n"
-                + "FROM " + KeySpace + "." + tableName1 + "\n"
+        String query1 = createSelectClause(selectColumns1, columnName1) + lineBr
+                + "FROM " + KeySpace + "." + tableName1 + lineBr
                 + where1
                 + "ORDER BY " + columnName1 + " ASC";
 
@@ -721,9 +731,19 @@ public class CassandraJoins {
         System.out.println("Running index join. Keyspace:" + KeySpace + " Table1:" + tableName1 + " Column1:" + columnName1 + " Table2: " + tableName2 + " Column2:" + columnName2);
 
         long startTime = System.currentTimeMillis();
-
-        String query1 = createSelectClause(selectColumns1, columnName1) + "\n"
-                + "FROM " + KeySpace + "." + tableName1 + "\n"
+        
+        String lineBr = null;
+        if (System.getProperty("os.name").contains("Windows"))
+        {
+            lineBr = "\r\n";
+        }
+        else
+        {
+            lineBr = "\n";
+        }
+        
+        String query1 = createSelectClause(selectColumns1, columnName1) + lineBr
+                + "FROM " + KeySpace + "." + tableName1 + lineBr
                 + createWhereClause(whereRelations1, null, null, null);
 
         if (rowsLimit != 0) {
@@ -808,6 +828,7 @@ public class CassandraJoins {
     }
 
     private static String checkWhereRelations(Cluster ClusterConn, String KeySpace, String tableName, String[] whereRelations) {
+                
         for (int i = 0; i < whereRelations.length; i++) {
             if ((!whereRelations[i].contains("="))
                     && (!whereRelations[i].contains(" in ")) && (!whereRelations[i].contains(" IN "))
@@ -857,7 +878,9 @@ public class CassandraJoins {
             }
 
             int minval = pq.peek();
-
+            /**
+             * Add a for loop here to check both 
+             */
             if (minval == eq_pos) {
                 colname = whereRelations[i].split("=")[0].replaceAll("\\s", "");
             } else if (minval == in_pos) {

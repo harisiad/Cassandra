@@ -6,16 +6,21 @@
 package CassandraJoinsParser;
 
 import com.sun.media.jfxmedia.logging.Logger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.apache.cassandra.cql.WhereClause;
 import org.apache.cassandra.cql3.CqlLexer;
 import org.apache.cassandra.cql3.CqlParser;
+import org.apache.cassandra.cql.Relation;
 import org.apache.cassandra.cql3.statements.SelectStatement;
 import org.apache.cassandra.cql3.statements.ParsedStatement;
+import org.apache.cassandra.cql3.statements.SelectStatement.RawStatement;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 
 /**
  * TODO 1. Fix GetTablesList to get more than one tables. Issue rawStmt.getColumn() doesn't give more than one tables, but instead gives only one. [DONE]
@@ -236,7 +241,8 @@ public class Parser
                 for (String cond : tables)
                 {
                     String[] table = getTableArray();
-                    _qConditionals.put(table[tableIdx], cond);
+                    String strippedCond = cond.split(table[tableIdx] + ".")[1];
+                    _qConditionals.put(table[tableIdx], strippedCond);
                     tableIdx++;
                 }
             }
@@ -246,7 +252,7 @@ public class Parser
                 {
                     if (containsTable[i])
                     {
-                        _qConditionals.put(getTableArray()[i], wholeConditions);
+                        _qConditionals.put(getTableArray()[i], wholeConditions.replaceAll(getTableArray()[i] + ".", ""));
                     }
                 }
             }
@@ -264,9 +270,16 @@ public class Parser
      */
     public String[] getConditionsList(String tableName)
     {
+        String condition = _qConditionals.get(tableName);
+        
+        if (condition == null)
+        {
+            return null;
+        }
+        
         String[] result = 
         {
-            _qConditionals.get(tableName)
+            condition
         };
                 
         return result;
@@ -358,7 +371,7 @@ public class Parser
      * The holy fucking grail
      * @throws RecognitionException 
      */
-    public void BaseParser() throws RecognitionException
+    public void BaseParser() throws RecognitionException, InvalidRequestException
     {
         StmtT stmtQ;
         ANTLRStringStream stringStream = new ANTLRStringStream(getQuery());
@@ -402,7 +415,7 @@ public class Parser
 //      System.out.println("Keyspace: " + rawStmt.keyspace());
 //      System.out.println("Column family: " + rawStmt.columnFamily());
 //      rawStmt.selectClause.forEach(sl -> System.out.println("select: " + sl.selectable.toString()));
-//      rawStmt.whereClause.relations.forEach(c -> addList(getConditionsList(), c.getValue().getText()));  
+//      rawStmt.whereClause.relations.forEach(c -> System.out.println(c));
 
         setKeyspace(rawStmt.keyspace());
         
