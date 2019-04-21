@@ -10,6 +10,7 @@ package CassandraJoinsParser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,7 +32,7 @@ public class ParserTest {
      * 2. table1, table2
      */
     @Test
-    public void testGetTableArray() {
+    public void testGetTableArray() throws InvalidRequestException {
         System.out.println("Testing getTableArray...");
         String[] testQueries = 
         {
@@ -95,7 +96,7 @@ public class ParserTest {
      * 3. {"name","age"}
      */
     @Test
-    public void testGetColumns() {
+    public void testGetColumns() throws InvalidRequestException {
         System.out.println("Testing getColumns...");
         String[] testQueries = 
         {
@@ -169,7 +170,7 @@ public class ParserTest {
      * 2. b
      */
     @Test
-    public void testGetKeyspace() 
+    public void testGetKeyspace() throws InvalidRequestException 
     {
         System.out.println("Testing getKeyspace...");
         String[] testQueries = 
@@ -214,7 +215,7 @@ public class ParserTest {
     }
     
     @Test
-    public void testGetConditionsList()
+    public void testGetConditionsList() throws InvalidRequestException
     {
         System.out.println("Testing New Conditionals...");
         String[] testQueries = 

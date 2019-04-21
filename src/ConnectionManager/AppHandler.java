@@ -14,9 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
 import CassandraJoinsParser.Parser;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 
 /**
- * TODO 1. Check ArrayOutOfBoundIndex exception case when query has 1 table
  * @author Alex
  */
 public class AppHandler 
@@ -140,7 +140,7 @@ public class AppHandler
         }
     }
     
-    public static void RunApp(String hostname) throws RecognitionException
+    public static void RunApp(String hostname) throws RecognitionException, InvalidRequestException
     {
         _hostname = hostname;
         setRowNum(DEFAULT_ROW_NUMBERS);

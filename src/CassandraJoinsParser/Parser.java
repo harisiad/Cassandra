@@ -6,38 +6,20 @@
 package CassandraJoinsParser;
 
 import com.sun.media.jfxmedia.logging.Logger;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.apache.cassandra.cql.WhereClause;
 import org.apache.cassandra.cql3.CqlLexer;
 import org.apache.cassandra.cql3.CqlParser;
-import org.apache.cassandra.cql.Relation;
 import org.apache.cassandra.cql3.statements.SelectStatement;
 import org.apache.cassandra.cql3.statements.ParsedStatement;
-import org.apache.cassandra.cql3.statements.SelectStatement.RawStatement;
 import org.apache.cassandra.exceptions.InvalidRequestException;
 
 /**
- * TODO 1. Fix GetTablesList to get more than one tables. Issue rawStmt.getColumn() doesn't give more than one tables, but instead gives only one. [DONE]
- * Solution: regarding the keyspace being used read query between from and where keywords to get filter (use split on keywords (from, where) instead of space) and get the table names. 
- * TODO 2. Fix conditionals fill in tables. [DONE]
- * TODO 3. Fix columns fill in tables. [DONE]
- * TODO 3. Make use of teardown, setup and divide parse fucntionality to different get methods. [DONE]
- * TODO 4. Tidy code up. (Refactor) [DONE]
- * TODO 5. Fix testsuite to match the new changes. [DONE]
- * TODO 6. Change return of conditionals to return String array. [DONE]
- * TODO 7. [REQUIREMENT] Prof said that he wants to just enter a query and this should execute the join operations. [DONE]
- * TODO 7a. Get primary key column from table. Use keyspace + tablename to get tables primary key column name. [DONE]
- * TODO 7b. Ask from user to insert a query. [DONE]
- * TODO 7c. Ask user to enter a row limit. (Default 30000) (Ask professor for input) [DONE]
- * TODO 7d. Check conditionals for "CONTAINS" or "=" relations. [DONE]
- * TODO 8. [NEW REQUIREMENT] Change conditionals parsing to => separating via table + change conditionals to {key,value} data structure with keys the table names and [DONE]
- * values the ocnditions. 
+ * TODO 1. Use indexOf to get first occurrence of OR and AND. Check the predecessor and use to split there.
  * @author Alex
  */
 
@@ -176,9 +158,7 @@ public class Parser
     private int getTableIndex(Boolean[] arg)
     {
         int result = 0;
-        /**
-         * TODO Needs to change to implement dynamically more tables
-         */
+        
         for (Boolean isTrue : arg)
         {
             if (isTrue)
