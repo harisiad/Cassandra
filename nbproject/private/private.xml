@@ -3,11 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoins_time_measure/CassandraJoins.java</file>
+            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoinsParser/ExpressionTree.java</file>
+            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoins_time_measure/TimeKeeper.java</file>
             <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoinsParser/Tester.java</file>
-            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/test/CassandraJoinsParser/ParserTest.java</file>
             <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/ConnectionManager/AppHandler.java</file>
-            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoinsParser/AstStructure.java</file>
+            <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/InputManager/InputMgr.java</file>
             <file>file:/C:/Users/Alex/Documents/Projects/repos/CassandraJoins/src/CassandraJoinsParser/Parser.java</file>
         </group>
     </open-files>

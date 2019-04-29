@@ -23,6 +23,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ColumnMetadata;
+import com.datastax.driver.core.PoolingOptions;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -39,8 +40,14 @@ public class CassandraJoins {
     private CassandraJoins() {}
 
     public static Cluster connect(String node) {
+        PoolingOptions options = new PoolingOptions();
+        
+        options.setHeartbeatIntervalSeconds(0);
+        options.setIdleTimeoutSeconds(60);
+        
         Cluster cluster = Cluster.builder()
                 .addContactPoint(node)
+                .withPoolingOptions(options)
                 .build();
         Metadata metadata = cluster.getMetadata();
         System.out.printf("ClusterConnected to cluster: %s\n",

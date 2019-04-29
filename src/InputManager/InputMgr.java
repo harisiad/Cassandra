@@ -21,10 +21,8 @@ public class InputMgr
      * Reads users input and checks if user wants to exit the program.
      * @return exitFlag true/false to terminate program or not
      */
-    public static boolean UsrInput()
+    public static void UsrInput()
     {
-        boolean continueFlag = true;
-        boolean ignoreCase = true;
         Scanner keyboardInput = new Scanner(System.in);
         String input;
         
@@ -32,17 +30,12 @@ public class InputMgr
         System.out.println("> Enter exit to terminate the program");
         
         input = keyboardInput.nextLine();
-        
-        if(input.regionMatches(ignoreCase, 0, "exit", 0, input.length()))
-        {
-            continueFlag = false;
-        }
-        else
-        {
-            setUserInput(input);
-        }
-        
-        return continueFlag;
+        setUserInput(input);
+    }
+    
+    public static boolean ExitApplication()
+    {
+        return ! getUserInput().equalsIgnoreCase("exit");
     }
     
     /**

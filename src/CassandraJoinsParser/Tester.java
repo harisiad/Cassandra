@@ -7,11 +7,10 @@ package CassandraJoinsParser;
 
 import org.antlr.runtime.RecognitionException;
 import CassandraJoins_time_measure.*;
+import ConnectionManager.AppHandler;
 import org.apache.cassandra.exceptions.InvalidRequestException;
 
 /**
- * TODO 1. Create new class for AST structure (AstStructure)
- * TODO 2. Create version 2 of getConditionals to use Abstract Tree logic parsing.
  * @author Alexandros Charisiadis
  */
 public class Tester 
@@ -29,35 +28,63 @@ public class Tester
         
         System.out.println("Opening connection to Cassandra localhost database");
         
-        ExpressionTree tree = new ExpressionTree();
+//        ExpressionTree tree = new ExpressionTree();
+//        
+//        String[][] condTests1 = 
+//        {
+//            {
+//                "table1.xbf = axv.reuity",
+//                " OR "
+//            },
+//            {
+//                "a = b",
+//                " OR "
+//            },
+//            {
+//                "a = 1",
+//                " AND "
+//            },
+//            {
+//                "b = 2",
+//                " OR "
+//            },
+//            {
+//                "c = 1",
+//                ""
+//            }
+//        };
+//        
+//        for (int i = 0; i < condTests1.length; i++)
+//        {
+//            tree.insertClause(condTests1[i][0], condTests1[i][1]);
+//        }
+//        
+//        tree.printTree();
+//        
+//        for (int i = 0; i < 100; i++)
+//        {
+//            System.out.print("-");
+//        }
+//        
+//        System.out.println("");
+//        
+//        tree = new ExpressionTree();
+//        
+//        String[][] condTests2 =
+//        {
+//            {
+//                "table1.xbf = axv.rdasg",
+//                ""
+//            }
+//        };
+//        
+//        for (int i = 0; i < condTests2.length; i++)
+//        {
+//            tree.insertClause(condTests2[i][0], condTests2[i][1]);
+//        }
+//        
+//        tree.printTree();
         
-        String[][] condTests = 
-        {
-            {
-                "table1.xbf = axv.reuity",
-                " OR "
-            },
-            {
-                "a = b",
-                " OR "
-            },
-            {
-                "a = 1",
-                " AND "
-            },
-            {
-                "b = 2",
-                " OR "
-            }
-        };
-        
-        for (int i = 0; i < condTests.length; i++)
-        {
-            tree.insertClause(condTests[i][0], condTests[i][1]);
-        }
-        
-        tree.printTree();
-        
-        //AppHandler.RunApp(host);
+        AppHandler.RunApp(host);
     }
 }

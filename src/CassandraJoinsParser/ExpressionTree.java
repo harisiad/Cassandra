@@ -8,13 +8,13 @@ package CassandraJoinsParser;
 import java.util.ArrayList;
 
 /**
- * TODO 1. PriorityQueue, with root + left childs -> Operators (AND,OR), with right child (clauses)
- * TODO 2. Insert new clause
- * TODO 3. Get join node function
+ * TODO 1. PriorityQueue, with root + left childs -> Operators (AND,OR), with right child (clauses) [DONE]
+ * TODO 2. Insert new clause [DONE]
+ * TODO 3. Get join node function [DONE]
  * @author Alex
  */
 public class ExpressionTree {
-    ArrayList<ExpressionTreeNode> exprTree;
+    private ArrayList<ExpressionTreeNode> exprTree;
     
     public ExpressionTree()
     {
@@ -54,6 +54,22 @@ public class ExpressionTree {
             exprTree.add(operatorNode);
             exprTree.add(clauseNode);
         }
+        else
+        {
+            if (exprTree.isEmpty())
+            {
+                exprTree.add(clauseNode);
+            }
+            else
+            {
+                ExpressionTreeNode currentNode = traverseExpressionTree();
+                
+                currentNode.setLeftChild(clauseNode);
+                
+                exprTree.add(clauseNode);
+            }
+        }
+        
         return insertionSuccessResult;
     }
     
@@ -94,17 +110,17 @@ public class ExpressionTree {
         });
     }
     
-    protected String[] getJoinFields()
+    protected String getJoinFields()
     {
-        String[] result = new String[2];
+        String result = "";
         
-        for (ExpressionTreeNode node : exprTree )
+        for (ExpressionTreeNode node : exprTree)
         {
             if (node instanceof ClauseNode)
             {
                 if (((ClauseNode) node).getIsJoin())
                 {
-                    result = ((ClauseNode) node).getClause().split("=");
+                    result = ((ClauseNode) node).getClause();
                 }
             }
         }
@@ -112,7 +128,12 @@ public class ExpressionTree {
         return result;
     }
     
-    private class ExpressionTreeNode
+    protected ArrayList<ExpressionTreeNode> getExpressionTree()
+    {
+        return exprTree;
+    }
+    
+    protected class ExpressionTreeNode
     {
         private ExpressionTreeNode _left, _right;
         
@@ -143,7 +164,7 @@ public class ExpressionTree {
         }
     }
     
-    private class ClauseNode extends ExpressionTreeNode
+    protected class ClauseNode extends ExpressionTreeNode
     {
         private final String _clause;
         private final boolean _isJoinFlag;
@@ -166,7 +187,7 @@ public class ExpressionTree {
         }
     }
     
-    private class OperatorNode extends ExpressionTreeNode
+    protected class OperatorNode extends ExpressionTreeNode
     {
         private final String _operator;
         

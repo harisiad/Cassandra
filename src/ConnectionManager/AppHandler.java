@@ -28,39 +28,6 @@ public class AppHandler
     
     private AppHandler(){}
     
-    
-    /**
-     * Gets the last primary key from list of primary keys.
-     * @param conn
-     * @param keyspace
-     * @param table
-     * @return key -> primary key of table
-     */
-    private static String getPrimaryKey(Cluster conn, String keyspace, String table)
-    {
-        String key;
-        List<ColumnMetadata> primKeys;
-        
-        primKeys = conn.getMetadata().getKeyspace(keyspace).getTable(table).getPrimaryKey();
-        
-        key = primKeys.get(primKeys.size() - 1).getName();
-        
-        return key;
-    }
-    
-    private static String[] getPrimaryKeys(Cluster conn, String keyspace, String[] tables)
-    {
-        String[] primKeys = new String[tables.length];
-        int iter = 0;
-        
-        for (String tbl : tables)
-        {
-            primKeys[iter++] = getPrimaryKey(conn, keyspace, tbl);
-        }
-        
-        return primKeys;
-    }
-    
     private static void getTimes()
     {
         CassandraJoins.getTimes().keySet().forEach((key) -> 
@@ -89,55 +56,39 @@ public class AppHandler
     private static void executeJoin(Cluster connection) throws CassandraJoinsException
     {
         String[] tables;
-        String[] primKeys;
-        String[] conditions1;
-        String[] conditions2;
+        String firstTable;
+        String secondTable;
+        String joinFieldFirstTable;
+        String joinFieldSecondTable;
+        String[] conditionsFirstTable;
+        String[] conditionsSecondTable;
         String[] columns;
         String operator;
         String keyspace;
         String tmpTableName = "CJ_Temp_Table";
         
-        if (_qParser.getTableArray().length == 1)
-        {
-            keyspace = _qParser.getKeyspace();
-            columns = _qParser.getColumns().length == 0 ? null : _qParser.getColumns();
-            tables = _qParser.getTableArray();
-            primKeys = getPrimaryKeys(connection, keyspace, tables);
-            conditions1 = _qParser.getConditionsList(tables[0]);
-            operator = _qParser.getConditionalsOperartor();
+        keyspace = _qParser.getKeyspace();
+        columns = _qParser.getColumns().length == 0 ? null : _qParser.getColumns();
+        tables = _qParser.getTableArray();
+        firstTable = _qParser.getTableArray()[0];
+        secondTable = _qParser.getTableArray()[1];
+        joinFieldFirstTable = _qParser.getJoinFields()[0];
+        joinFieldSecondTable = _qParser.getJoinFields()[1];
+        conditionsFirstTable = _qParser.getConditionsList(firstTable);
+        conditionsSecondTable = _qParser.getConditionsList(secondTable);
+        operator = _qParser.getConditionalsOperartor();
 
-            CassandraJoins.join
-            (
-                connection, 
-                keyspace,
-                tables[0],primKeys[0],columns,conditions1,
-                null,null,null,null,
-                getRowNum(),
-                tmpTableName,
-                operator
-            );
-        }
-        else if (_qParser.getTableArray().length > 1)
-        {
-            keyspace = _qParser.getKeyspace();
-            columns = _qParser.getColumns().length == 0 ? null : _qParser.getColumns();
-            tables = _qParser.getTableArray();
-            primKeys = getPrimaryKeys(connection, keyspace, tables);
-            conditions1 = _qParser.getConditionsList(tables[0]);
-            conditions2 = _qParser.getConditionsList(tables[1]);
-            operator = _qParser.getConditionalsOperartor();
+        CassandraJoins.join
+        (
+            connection, 
+            keyspace,
+            tables[0],joinFieldFirstTable,columns,conditionsFirstTable,
+            tables[1],joinFieldSecondTable,columns,conditionsSecondTable,
+            getRowNum(),
+            tmpTableName,
+            operator
+        );
 
-            CassandraJoins.join
-            (
-                connection, 
-                keyspace,
-                tables[0],primKeys[0],columns,conditions1,
-                tables[1],primKeys[1],columns,conditions2,
-                getRowNum(),
-                tmpTableName,
-                operator
-            );
-        }
     }
     
     public static void RunApp(String hostname) throws RecognitionException, InvalidRequestException
@@ -155,7 +106,7 @@ public class AppHandler
         {
             connection = CassandraJoins.connect(_hostname);
             
-            while(InputMgr.UsrInput())
+            while(InputMgr.ExitApplication())
             {
                 _qParser = new Parser(InputMgr.getUserInput());
                 
@@ -164,6 +115,8 @@ public class AppHandler
                 executeJoin(connection);
                 
                 getTimes();
+                
+                InputMgr.UsrInput();
             }
                         
         }
