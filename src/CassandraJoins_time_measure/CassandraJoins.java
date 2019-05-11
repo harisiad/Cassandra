@@ -929,7 +929,7 @@ public class CassandraJoins {
         }
 
         if (KeySpace == null) {
-            throw new CassandraJoinsException("Null KeySpace parameter");
+            throw new CassandraJoinsException("Null KeySpace parameter. Please use <keyspace>.<table name> format on query.");
         }
 
         if (resultTableName == null) {

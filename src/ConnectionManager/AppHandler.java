@@ -8,8 +8,6 @@ package ConnectionManager;
 import CassandraJoins_time_measure.*;
 import InputManager.InputMgr;
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ColumnMetadata;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
@@ -67,28 +65,35 @@ public class AppHandler
         String keyspace;
         String tmpTableName = "CJ_Temp_Table";
         
-        keyspace = _qParser.getKeyspace();
-        columns = _qParser.getColumns().length == 0 ? null : _qParser.getColumns();
-        tables = _qParser.getTableArray();
-        firstTable = _qParser.getTableArray()[0];
-        secondTable = _qParser.getTableArray()[1];
-        joinFieldFirstTable = _qParser.getJoinFields()[0];
-        joinFieldSecondTable = _qParser.getJoinFields()[1];
-        conditionsFirstTable = _qParser.getConditionsList(firstTable);
-        conditionsSecondTable = _qParser.getConditionsList(secondTable);
-        operator = _qParser.getConditionalsOperartor();
+        try
+        {
+            keyspace = _qParser.getKeyspace();
+            columns = _qParser.getColumns().length == 0 ? null : _qParser.getColumns();
+            tables = _qParser.getTableArray();
+            firstTable = _qParser.getTableArray()[0];
+            secondTable = _qParser.getTableArray()[1];
+            joinFieldFirstTable = _qParser.getJoinFields()[0];
+            joinFieldSecondTable = _qParser.getJoinFields()[1];
+            conditionsFirstTable = _qParser.getConditionsList(firstTable);
+            conditionsSecondTable = _qParser.getConditionsList(secondTable);
+            operator = _qParser.getConditionalsOperartor();
 
-        CassandraJoins.join
-        (
-            connection, 
-            keyspace,
-            tables[0],joinFieldFirstTable,columns,conditionsFirstTable,
-            tables[1],joinFieldSecondTable,columns,conditionsSecondTable,
-            getRowNum(),
-            tmpTableName,
-            operator
-        );
-
+            CassandraJoins.join
+            (
+                connection, 
+                keyspace,
+                tables[0],joinFieldFirstTable,columns,conditionsFirstTable,
+                tables[1],joinFieldSecondTable,columns,conditionsSecondTable,
+                getRowNum(),
+                tmpTableName,
+                operator
+            );
+        }
+        catch (ArrayIndexOutOfBoundsException | 
+                NullPointerException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
     
     public static void RunApp(String hostname) throws RecognitionException, InvalidRequestException
@@ -118,12 +123,12 @@ public class AppHandler
                 
                 InputMgr.UsrInput();
             }
-                        
         }
         catch (RecognitionException e)
         {
             Logger.getLogger(AppHandler.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        } catch (CassandraJoinsException ex) 
+        } 
+        catch (CassandraJoinsException ex) 
         {
             Logger.getLogger(AppHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

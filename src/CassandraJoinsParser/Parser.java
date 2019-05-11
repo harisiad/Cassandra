@@ -26,8 +26,9 @@ import org.apache.cassandra.exceptions.InvalidRequestException;
  * TODO 5. Rename setCondtiotionals to createExpressionTree [DONE]
  * TODO 6. Rename _qConditionals to _qTableToConditionalsMapping, change Map<String, String> to Map<String, ArrayList<String>> [DONE]
  * TODO 6.5 Change implementation of createConditionalToTableMapping to fill correctly _qTableToConditionalsMapping and being executed after Expression Tree creation. [DONE]
- * TODO 6.5.1 Strip all conditions from table. (JOIN FIELDS AND CONDITIONALS) [CRITICAL]
+ * TODO 6.5.1 Strip all conditions from table. (JOIN FIELDS AND CONDITIONALS) [CRITICAL] [DONE]
  * TODO 7. Refactor setConditionals [HIGH]
+ * TODO 8. Create unit tests for new functionalities [HIGH]
  * @author Alex
  */
 
@@ -106,19 +107,24 @@ public class Parser
     /**
      * Initialize join fields
      */
-    public void initializeJoinFields()
+    public void initializeJoinFields() throws ParserException
     {
         _qJoinClause = _qExpressionTree.getJoinFields();
-        _qJoinFields = _qJoinClause.split("(?i)([whitespace]*=[whitespace]*|[whitespace]*contains[whitespace]*)");
+        _qJoinFields = _qJoinClause.split("(?i)(\\s*=\\s*|\\s*contains\\s*)");
         for (int i = 0; i < _qJoinFields.length; i++)
         {
             for (String table : getTableArray())
             {
-                if (_qJoinFields[i].contains(table))
+                if (_qJoinFields[i].contains(table + "."))
                 {
-                    _qJoinFields[i] = _qJoinFields[i].replaceAll(table + ".", "").trim();
+                    _qJoinFields[i] = _qJoinFields[i].replace(table + ".", "").trim();
                 }
             }
+        }
+        
+        if (_qJoinClause.isEmpty())
+        {
+            throw new ParserException("No join statement has been found inside the query. Please insert join statement in order to perform a join operation.");
         }
     }
     
@@ -302,7 +308,7 @@ public class Parser
                     {
                         ArrayList<String> tmpToInsert = _qTableToConditionalsMapping.get(table);
                         
-                        tmpToInsert.add(((ExpressionTree.ClauseNode) node).getClause().replaceAll(table + ".", "").trim());
+                        tmpToInsert.add(((ExpressionTree.ClauseNode) node).getClause().replace(table + ".", "").trim());
                         
                         _qTableToConditionalsMapping.put(table, tmpToInsert);
                     }
@@ -338,11 +344,13 @@ public class Parser
     
     /**
      * Set elements for conditions
+     * @throws CassandraJoinsParser.ParserException
      */
-    public void setWhereClaue()
+    public void setWhereClaue() throws ParserException
     {
         String q = this.getQuery();
         String[] whereSplit = q.split("( where | WHERE )");
+
         try
         {
             String result = whereSplit[1];
@@ -351,10 +359,9 @@ public class Parser
 
             _qWhereClause = result;
         }
-        catch (ArrayIndexOutOfBoundsException exArIndxOOB)
+        catch (ArrayIndexOutOfBoundsException ex)
         {
-            Logger.logMsg(Logger.WARNING, "No where clause has been found.");
-            _qWhereClause = new String();
+            throw new ParserException("No where statement was found inside query. Please use where statement inside query along with a join operation to be performed.", ex);
         }
     }
     
@@ -422,7 +429,7 @@ public class Parser
      * The holy fucking grail
      * @throws RecognitionException 
      */
-    public void BaseParser() throws RecognitionException, InvalidRequestException
+    public void BaseParser() throws RecognitionException
     {
         StmtT stmtQ;
         ANTLRStringStream stringStream = new ANTLRStringStream(getQuery());
@@ -462,13 +469,21 @@ public class Parser
      */
     private void SelectHandler(SelectStatement.RawStatement rawStmt)
     {
-        setKeyspace(rawStmt.keyspace());
-        setColumns();
-        setTableArray();
-        setWhereClaue();
-        initializeMap();
-        createExpressionTree();
-        initializeJoinFields();
-        createTableToConditionalsMapping();
+        try
+        {
+            setKeyspace(rawStmt.keyspace());
+            System.out.println(rawStmt.columnFamily());
+            setColumns();
+            setTableArray();
+            setWhereClaue();
+            initializeMap();
+            createExpressionTree();
+            initializeJoinFields();
+            createTableToConditionalsMapping();
+        }
+        catch (ParserException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }
