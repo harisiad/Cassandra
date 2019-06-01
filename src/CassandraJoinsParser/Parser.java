@@ -5,7 +5,6 @@
  */
 package CassandraJoinsParser;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.apache.cassandra.cql3.CqlLexer;
 import org.apache.cassandra.cql3.CqlParser;
 import org.apache.cassandra.cql3.statements.SelectStatement;
 import org.apache.cassandra.cql3.statements.ParsedStatement;
-import org.apache.cassandra.exceptions.InvalidRequestException;
 
 /**
  * TODO 1. Use indexOf to get first occurrence of OR and AND. Check the predecessor and use to split there. [DONE]
